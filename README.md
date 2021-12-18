@@ -68,3 +68,40 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+# Design
+
+The primary motivation behind this web application is to provide a framework to simulate DPS not of a single move, but rather a rotation based on a team composition. To that end, the direct approach is to create a timeline based analysis tool that can support not just the multiplier analysis. Further works based on this project could be perhaps ML optimization of rotations based on character selection, or possibly machine search a selection of characters that achieves a certain DPS.
+
+## Data Structures
+
+We will establish a couple of data structures that will each uniquely represent a certain feature of the timeline.
+
+### Stats
+```js
+let Stat = class {
+    constructor(a bunch of character stats here) {
+        //we set the stats like Atk, Def, etc used for calculation.
+    }
+}
+```
+
+### Skill Representation
+```js
+let Skill = class {
+  constructor(name, start, duration, cd, effect, multipliers) {
+    this.name = name;                   // string: The name of the skill
+    this.start = start;                 // float: start time of the skill
+    this.duration = duration;           // float: The duration of the skill; (0 for pure instance damage skills)
+    this.cd = cd;                       // float: The cooldown of the skill
+    this.effect = effect;               // function: the effect of the skill (i.e. buffs)
+    this.multipliers = multipliers;     // array: Multipliers of the skill in an array of (%, offset) pairs
+  }
+};
+```
+### Timeline Representation
+We will use 3 different queues/dictionaries to represent the timeline: One queue to represent the buffs on the characters, the other to represent the instances of damage - i.e. pure multipliers. The 3rd queue will be used as representation of the resulting damage, for use in dps calculations.
+
+## Algorithms
+
+## Rationale
