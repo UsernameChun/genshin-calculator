@@ -13,18 +13,21 @@ class damage_source {
 }
 
 class ability {
-    constructor(ability_pcnt, element, gauge) {
+    constructor(ability_pcnt, element, gauge, start_time) {
         this.ability_pcnt = ability_pcnt;
         this.element = element;
         this.gauge = gauge;
+        this.start_time = start_time;
     }
 }
 
 class element {
+    static anemo = new element("anemo");
     static pyro = new element("pyro");
     static electro = new element("electro");
     static hydro = new element("hydro");
     static cryo = new element("cryo");
+    static frozen = new element("frozen");
     static phys = new element("phys");
     static geo = new element("geo");
     constructor(elem) {
@@ -33,6 +36,11 @@ class element {
 }           
 
 class reaction {
+    static refresh = new reaction("refresh");
+    static none = new reaction("none");
+    static vaporized = new reaction("vaporized");
+    static melt = new reaction("melt");
+    static frozen = new reaction("frozen");
     static overloaded = new reaction("overloaded");
     static shattered = new reaction("shattered");
     static electrocharged = new reaction("electrocharged");
@@ -44,7 +52,7 @@ class reaction {
 }
 
 class damage_taker {
-    constructor(level, res_bases, res_bnses, res_dbffs, def, def_reduct, dmg_reduct, aura, gauge) {
+    constructor(level, res_bases, res_bnses, res_dbffs, def, def_reduct, dmg_reduct, aura, gauge, aura1, gauge1) {
         this.level = level;
         this.res_bases = res_bases;
         this.res_bnses = res_bnses;
@@ -52,8 +60,10 @@ class damage_taker {
         this.def = def;
         this.def_reduct = def_reduct;
         this.dmg_reduct = dmg_reduct; // xingqiu
-        this.aura = aura;
-        this.gauge = gauge;
+        this.aura0 = aura;
+        this.gauge0 = gauge;
+        this.aura1 = aura1;
+        this.gauge1 = gauge1;
     }
 }
 
@@ -83,6 +93,116 @@ function damage(source, abil, taker) {
         reaction: 0
     };
 
+}
+
+function reaction_manager(damage_taker, ability, raw_dmg) {
+    const res_matrix = 
+    [[reaction.swirl, reaction.refresh, reaction.overloaded, reaction.vaporized, reaction.melt, reaction.none, reaction.none],
+     [reaction.swirl, reaction.overloaded, reaction.refresh, reaction.electrocharged, reaction.superconduct, reaction.none, reaction.none],
+     [reaction.swirl, reaction.vaporized, reaction.electrocharged, reaction.refresh, reaction.frozen, reaction.none, reaction.none],
+     [reaction.swirl, reaction.melt, reaction.superconduct, reaction.frozen, reaction.refresh, reaction.none, reaction.none],
+     [reaction.swirl, reaction.melt, reaction.superconduct, reaction.refresh, reaction.refresh, reaction.none, reaction.none]
+     [reaction.none, reaction.none, reaction.none, reaction.none, reaction.none, reaction.none],
+     [reaction.none, reaction.none, reaction.none, reaction.none, reaction.none, reaction.none]];
+    switch(damage_taker.aura0) {
+        case element.pyro:
+            var index0 = 0;
+            break;
+        case element.electro:
+            var index0 = 1;
+            break;
+        case element.hydro:
+            var index0 = 2;
+            break;
+        case element.cryo:
+            var index0 = 3;
+            break;
+        case element.frozen:
+            var index0 = 4;
+            break;
+        case element.phys:
+            var index0 = 5;
+            break;
+        case element.geo:
+            var index0 = 6;
+            break;
+        case _:
+            var index0 = -1;
+    }
+    switch(damage_taker.aura1) {
+        case element.pyro:
+            var index1 = 0;
+            break;
+        case element.electro:
+            var index1 = 1;
+            break;
+        case element.hydro:
+            var index1 = 2;
+            break;
+        case element.cryo:
+            var index1 = 3;
+            break;
+        case element.frozen:
+            var index1 = 4;
+            break;
+        case element.phys:
+            var index1 = 5;
+            break;
+        case element.geo:
+            var index1 = 6;
+            break;
+        case _:
+            var index1 = -1;
+    }
+    switch(ability.aura) {
+        case element.anemo:
+            var index2 = 0;
+            break;
+        case element.pyro:
+            var index2 = 1;
+            break;
+        case element.electro:
+            var index2 = 2;
+            break;
+        case element.hydro:
+            var index2 = 3;
+            break;
+        case element.cryo:
+            var index2 = 4;
+            break;
+        case element.phys:
+            var index2 = 5;
+            break;
+        case element.geo:
+            var index2 = 6;
+            break;
+    }
+    if (index0 > 0) { //if gauge one exists
+        var res_reaction0 = res_matrix[index0, index1];
+    }
+    if (index1 > 0) { //if gauge two exists a reaction
+        var res_reaction1 = res_matrix[index0, index1];
+    }
+    var reactions = [res_reaction0, res_reaction1];
+    // solve potential guage conflicts (i.e. melt and vaporize)
+    // manage gauge if refresh:
+    if (res_reaction0 == reaction.refresh) {
+        if (damage_taker.aura0 == ability.aura) {
+            damage_taker.gauge0 = ability.gauge;
+        } else {
+            damage_taker.guage1 = ability.gauge;
+        }
+    } else {
+        if (res_reaction0  == reaction.none) {
+
+        }
+    }
+    //
+    if (res_reaction == reaction.superconduct || res_reaction == reaction.overloaded || res_reaction == reaction.shattered || res_reaction == reaction.swirl || res_reaction == reaction.electrocharged) {
+        return raw_dmg + transdmg(source, taker, res_reaction, rxnbns);
+    } else {
+        return raw_dmg * reaction_bonus(damage_taker.aura, ability.aura, source, rxnbns);
+    }
 }
 
 // at some point implement reactionbonus for CWOF and mona c1
