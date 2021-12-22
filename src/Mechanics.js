@@ -43,9 +43,10 @@ class damage_taker {
         this.dmg_reduct = dmg_reduct; // xingqiu
     }
 }
+// whilst he shits!
 
 function damage(source, abil, taker) {
-    let atk = (source.atk_base * (1 + source.atk_pcnt) + source.atk_base) * (1 + source.dmg_bns);
+    let atk = (source.atk_base * (1 + source.atk_pcnt) + source.atk_flat);
     let rawdmg = (atk * abil.ability_pcnt + source.dmg_flat) * (1 + source.dmg_bns);
     let defmult = (source.level + 100)/((1 - taker.def_reduct) * (taker.level + 100) + source.level + 100);
 
