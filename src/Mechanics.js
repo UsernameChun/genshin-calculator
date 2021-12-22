@@ -7,7 +7,7 @@ class damage_source {
         this.crit_rate = crit_rate;
         this.crit_dmg = crit_dmg;
         this.em = em;
-        this.dmg_bns = dmg_bns;
+        this.dmg_bns = dmg_bns; //change to dictionary.
         this.dmg_flat = dmg_flat;
     }
 }
@@ -43,7 +43,6 @@ class damage_taker {
         this.dmg_reduct = dmg_reduct; // xingqiu
     }
 }
-// whilst he shits!
 
 function damage(source, abil, taker) {
     let atk = (source.atk_base * (1 + source.atk_pcnt) + source.atk_flat);
@@ -62,3 +61,8 @@ function damage(source, abil, taker) {
     return rawdmg * defmult * resmult * (1 - taker.dmg_reduct);
 
 }
+
+bennett = new damage_source(80, 1273, 0, 0, 0, 0, 0, .466, 0);
+hilichurl = new damage_taker(68, .10, 0, 0, 840, 0, 0);
+eskill = new ability(1.82, 0, 0);
+console.log(damage(bennett, eskill, hilichurl));
