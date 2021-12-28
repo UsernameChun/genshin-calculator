@@ -53,7 +53,7 @@ class reaction {
 }
 
 class damage_taker {
-    constructor(level, res_bases, res_bnses, res_dbffs, def, def_reduct, dmg_reduct, aura, gauge, aura1, gauge1, gauge0t, guage1t) {
+    constructor(level, res_bases, res_bnses, res_dbffs, def, def_reduct, dmg_reduct, aura, aura0, gauge, aura1, gauge1, gauge0t, guage1t) {
         this.level = level;
         this.res_bases = res_bases;
         this.res_bnses = res_bnses;
@@ -62,8 +62,10 @@ class damage_taker {
         this.def_reduct = def_reduct;
         this.dmg_reduct = dmg_reduct; // xingqiu
         this.aura = aura;
+        this.aura0 = aura0;
         this.gauge0 = gauge;
         this.gauge0t = gauge0t;
+        this.aura1 = aura1
         this.gauge1 = gauge1;
         this.gauge1t = guage1t;
     }
@@ -106,32 +108,7 @@ function reaction_manager(damage_taker, ability, raw_dmg) {
      [reaction.swirl, reaction.melt, reaction.superconduct, reaction.refresh, reaction.refresh, reaction.none, reaction.none]
      [reaction.none, reaction.none, reaction.none, reaction.none, reaction.none, reaction.none],
      [reaction.none, reaction.none, reaction.none, reaction.none, reaction.none, reaction.none]];
-    switch(damage_taker.aura0) {
-        case element.pyro:
-            var index0 = 0;
-            break;
-        case element.electro:
-            var index0 = 1;
-            break;
-        case element.hydro:
-            var index0 = 2;
-            break;
-        case element.cryo:
-            var index0 = 3;
-            break;
-        case element.frozen:
-            var index0 = 4;
-            break;
-        case element.phys:
-            var index0 = 5;
-            break;
-        case element.geo:
-            var index0 = 6;
-            break;
-        case _:
-            var index0 = -1;
-    }
-    switch(damage_taker.aura1) {
+    switch(damage_taker.aura) {
         case element.pyro:
             var index1 = 0;
             break;
@@ -182,34 +159,34 @@ function reaction_manager(damage_taker, ability, raw_dmg) {
             var index2 = -1;
             break;
     }
-    if (index0 > 0 && index2 > 0) { //if gauge one exists
-        var res_reaction0 = res_matrix[index0, index1];
-    }
     if (index1 > 0 && index2 > 0) { //if gauge two exists a reaction
-        var res_reaction1 = res_matrix[index0, index1];
+        var res_reaction = res_matrix[index0, index1];
     }
-    var reactions = [res_reaction0, res_reaction1];
     // solve potential guage conflicts (i.e. melt and vaporize)
     // manage gauge if refresh:
-    if (reactions[0] == reaction.none) {
+    if (res_reaction == reaction.none) {
+        return raw_dmg;
+    } else if (res_reaction == reaction.refresh) {
+        if (ability.aura == damage_taker.aura0) {
+            damage_taker.gauge0 = ability.gauge;
+        } else {
+            damage_taker.guage1 = ability.gauge;
+        }
+    } else if (res_reaction == reaction.overloaded) {
 
-    } else if (reactions[0] == reaction.refresh) {
+    } else if (res_reaction == reaction.superconduct) {
 
-    } else if (reactions[0] == reaction.overloaded) {
+    } else if (res_reaction == reaction.swirl) {
 
-    } else if (reactions[0] == reaction.superconduct) {
+    } else if (res_reaction == reaction.electrocharged) {
 
-    } else if (reactions[0] == reaction.swirl) {
+    } else if (res_reaction == reaction.melt) {
 
-    } else if (reactions[0] == reaction.electrocharged) {
+    } else if (res_reaction == reaction.vaporize) {
 
-    } else if (reactions[0] == reaction.melt) {
+    } else if (res_reaction == reaction.frozen) { //handle frozen special case
 
-    } else if (reactions[0] == reaction.vaporize) {
-
-    } else if (reactions[0] == reaction.frozen) {
-
-    } else if (reactions[0] == reaction.shattered) {
+    } else if (res_reaction == reaction.shattered) {
 
     }
     //
