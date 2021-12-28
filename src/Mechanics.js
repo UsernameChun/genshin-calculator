@@ -61,10 +61,9 @@ class damage_taker {
         this.def = def;
         this.def_reduct = def_reduct;
         this.dmg_reduct = dmg_reduct; // xingqiu
-        this.aura0 = aura;
+        this.aura = aura;
         this.gauge0 = gauge;
         this.gauge0t = gauge0t;
-        this.aura1 = aura1;
         this.gauge1 = gauge1;
         this.gauge1t = guage1t;
     }
@@ -192,7 +191,27 @@ function reaction_manager(damage_taker, ability, raw_dmg) {
     var reactions = [res_reaction0, res_reaction1];
     // solve potential guage conflicts (i.e. melt and vaporize)
     // manage gauge if refresh:
-    
+    if (reactions[0] == reaction.none) {
+
+    } else if (reactions[0] == reaction.refresh) {
+
+    } else if (reactions[0] == reaction.overloaded) {
+
+    } else if (reactions[0] == reaction.superconduct) {
+
+    } else if (reactions[0] == reaction.swirl) {
+
+    } else if (reactions[0] == reaction.electrocharged) {
+
+    } else if (reactions[0] == reaction.melt) {
+
+    } else if (reactions[0] == reaction.vaporize) {
+
+    } else if (reactions[0] == reaction.frozen) {
+
+    } else if (reactions[0] == reaction.shattered) {
+
+    }
     //
     if (res_reaction == reaction.superconduct || res_reaction == reaction.overloaded || res_reaction == reaction.shattered || res_reaction == reaction.swirl || res_reaction == reaction.electrocharged) {
         return raw_dmg + transdmg(source, taker, res_reaction, rxnbns);
