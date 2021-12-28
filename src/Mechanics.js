@@ -13,11 +13,12 @@ class damage_source {
 }
 
 class ability {
-    constructor(ability_pcnt, element, gauge, start_time) {
+    constructor(ability_pcnt, element, gauge, start_time, gauget) {
         this.ability_pcnt = ability_pcnt;
         this.element = element;
         this.gauge = gauge;
         this.start_time = start_time;
+        this.gauget = gauget;
     }
 }
 
@@ -52,7 +53,7 @@ class reaction {
 }
 
 class damage_taker {
-    constructor(level, res_bases, res_bnses, res_dbffs, def, def_reduct, dmg_reduct, aura, gauge, aura1, gauge1) {
+    constructor(level, res_bases, res_bnses, res_dbffs, def, def_reduct, dmg_reduct, aura, gauge, aura1, gauge1, gauge0t, guage1t) {
         this.level = level;
         this.res_bases = res_bases;
         this.res_bnses = res_bnses;
@@ -62,8 +63,10 @@ class damage_taker {
         this.dmg_reduct = dmg_reduct; // xingqiu
         this.aura0 = aura;
         this.gauge0 = gauge;
+        this.gauge0t = gauge0t;
         this.aura1 = aura1;
         this.gauge1 = gauge1;
+        this.gauge1t = guage1t;
     }
 }
 
@@ -176,27 +179,20 @@ function reaction_manager(damage_taker, ability, raw_dmg) {
         case element.geo:
             var index2 = 6;
             break;
+        case _:
+            var index2 = -1;
+            break;
     }
-    if (index0 > 0) { //if gauge one exists
+    if (index0 > 0 && index2 > 0) { //if gauge one exists
         var res_reaction0 = res_matrix[index0, index1];
     }
-    if (index1 > 0) { //if gauge two exists a reaction
+    if (index1 > 0 && index2 > 0) { //if gauge two exists a reaction
         var res_reaction1 = res_matrix[index0, index1];
     }
     var reactions = [res_reaction0, res_reaction1];
     // solve potential guage conflicts (i.e. melt and vaporize)
     // manage gauge if refresh:
-    if (res_reaction0 == reaction.refresh) {
-        if (damage_taker.aura0 == ability.aura) {
-            damage_taker.gauge0 = ability.gauge;
-        } else {
-            damage_taker.guage1 = ability.gauge;
-        }
-    } else {
-        if (res_reaction0  == reaction.none) {
-
-        }
-    }
+    
     //
     if (res_reaction == reaction.superconduct || res_reaction == reaction.overloaded || res_reaction == reaction.shattered || res_reaction == reaction.swirl || res_reaction == reaction.electrocharged) {
         return raw_dmg + transdmg(source, taker, res_reaction, rxnbns);
