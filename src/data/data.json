@@ -4,7 +4,7 @@
             "ability_pcnt": 326.8,
             "element": "pyro",
             "gauge": 2,
-            "gauget": "B"
+            "gaugetype": "B"
         }
     }
 }
