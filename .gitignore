@@ -24,3 +24,5 @@ yarn-error.log*
 
 # hide all data, for now, since its big
 src/data/*/
+scraping/pages/*
+scraping/scrape.py
